@@ -1,0 +1,18 @@
+libtrycatch-perl (1.003001+zentyal1) precise; urgency=low
+
+  * New upstream release
+
+ -- José A. Calvo <jacalvo@zentyal.com>  Fri, 18 Oct 2013 16:20:52 +0200
+
+libtrycatch-perl (1.003000-1build1) precise; urgency=low
+
+  * Rebuild for Perl 5.14.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Thu, 17 Nov 2011 07:30:03 +0000
+
+libtrycatch-perl (1.003000-1) unstable; urgency=low
+
+  * Initial packaging release.
+    Closes: bug#626702.
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sat, 14 May 2011 15:10:50 +0200
