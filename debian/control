@@ -24,12 +24,24 @@ Vcs-Git: git://git.debian.org/git/pkg-perl/packages/libtrycatch-perl
 Vcs-Browser: http://git.debian.org/?p=pkg-perl/packages/libtrycatch-perl.git
 Homepage: http://search.cpan.org/dist/TryCatch/
 
+Package: libtrycatch-lite-perl
+Architecture: any
+Depends: libb-hooks-endofscope-perl, libdevel-declare-perl, libscope-upper-perl, libvariable-magic-perl,
+ libsub-exporter-perl, libb-hooks-op-check-perl, libb-hooks-op-ppaddr-perl (>= 0.03)
+Description: first class try catch semantics for Perl - lite version
+ TryCatch aims to provide a nicer syntax and method to catch errors in
+ Perl, similar to what is found in other languages (such as Java, Python
+ or C++). The standard method of using "eval {}; if ($@) {}" is often
+ prone to subtle bugs, primarily that its far too easy to stomp on the
+ error in error handlers. And also eval/if isn't the nicest idiom.
+
 Package: libtrycatch-perl
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, ${perl:Depends}, ${cdbs:Depends}
+Depends: libtrycatch-lite-perl, libmoose-perl, libmoosex-types-perl, libparse-method-signatures-perl
 Description: first class try catch semantics for Perl
  TryCatch aims to provide a nicer syntax and method to catch errors in
  Perl, similar to what is found in other languages (such as Java, Python
  or C++). The standard method of using "eval {}; if ($@) {}" is often
  prone to subtle bugs, primarily that its far too easy to stomp on the
  error in error handlers. And also eval/if isn't the nicest idiom.
+
