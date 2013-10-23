@@ -33,7 +33,7 @@ use Sub::Exporter -setup => {
   installer => sub {
     my ($args, $to_export) = @_;
     my $pack = $args->{into};
-    my $ctx_class = $args->{parser} || 'TryCatch';
+    my $ctx_class = $args->{parser} || 'TryCatch::Lite';
 
     foreach my $name (@$to_export) {
       if (my $parser = __PACKAGE__->can("_parse_${name}")) {

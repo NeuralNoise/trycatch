@@ -64,7 +64,7 @@ try_return (pTHX_ OP *op, void *user_data) {
   PERL_UNUSED_VAR(op);
   PERL_UNUSED_VAR(user_data);
 
-  ctx = get_sv("TryCatch::CTX", 0);
+  ctx = get_sv("TryCatch::Lite::CTX", 0);
   if (ctx) {
     XPUSHs( ctx );
     PUTBACK;
@@ -178,7 +178,7 @@ hook_if_correct_file( pTHX_ OP *op, void* user_data ) {
       break;
 
     case OP_ENTERTRY:
-      eval_is_try = get_sv("TryCatch::NEXT_EVAL_IS_TRY", 0);
+      eval_is_try = get_sv("TryCatch::Lite::NEXT_EVAL_IS_TRY", 0);
       if ( eval_is_try && SvOK( eval_is_try ) && SvTRUE( eval_is_try ) ) {
         /* We've hooked a try block, so reset the flag */
         SvIV_set( eval_is_try, 0 );

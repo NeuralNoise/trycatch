@@ -10,6 +10,26 @@ use Moose::Util::TypeConstraints;
 
 our $VERSION = '1.003001';
 
+use Sub::Exporter -setup => {
+  exports => [qw/try/],
+  groups => { default => [qw/try/] },
+  installer => sub {
+    my ($args, $to_export) = @_;
+    my $pack = $args->{into};
+    my $ctx_class = $args->{parser} || 'TryCatch';
+
+    foreach my $name (@$to_export) {
+      if (my $parser = __PACKAGE__->can("_parse_${name}")) {
+        Devel::Declare->setup_for(
+          $pack,
+          { $name => { const => sub { $ctx_class->$parser($pack, @_) } } },
+        );
+      }
+    }
+    Sub::Exporter::default_installer(@_);
+
+  }
+};
 # Where we store all the TCs for catch blocks created at compile time
 # Not sure we really want to do this, but we will for now.
 our $TC_LIBRARY = {};
