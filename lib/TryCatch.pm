@@ -3,13 +3,10 @@ package TryCatch;
 use strict;
 use warnings;
 
-
 use Devel::Declare ();
 use B::Hooks::EndOfScope;
 use B::Hooks::OP::PPAddr;
 use Devel::Declare::Context::Simple;
-use Parse::Method::Signatures;
-use Moose::Util::TypeConstraints;
 use Scope::Upper qw/localize unwind want_at :words/;
 use Carp qw/croak/;
 use XSLoader;
@@ -22,6 +19,9 @@ our $VERSION = '1.003001';
 # Signal to the xs PL_check hooks.
 our $NEXT_EVAL_IS_TRY = 0;
 
+# To be set to 0 when using TryCatch ':simple'
+our $USE_MOOSE = 1;
+
 # Constants
 my ($LOOKAHEAD_TRY, $LOOKAHEAD_CATCH) = (0,1);
 
@@ -30,8 +30,11 @@ XSLoader::load(__PACKAGE__, $VERSION);
 use namespace::clean;
 
 use Sub::Exporter -setup => {
-  exports => [qw/try/],
-  groups => { default => [qw/try/] },
+  exports => [
+    qw/try/,
+    simple => sub { $USE_MOOSE = 0; return sub {} },
+  ],
+  groups => { default => [qw/try/], simple => [qw/try/] },
   installer => sub {
     my ($args, $to_export) = @_;
     my $pack = $args->{into};
@@ -228,7 +231,11 @@ sub parse_proto {
   croak "Run-away catch signature"
     unless (length $proto);
 
-  return $self->parse_proto_using_pms($proto);
+  if ($USE_MOOSE) {
+    return $self->parse_proto_using_pms($proto);
+  } else {
+    return $self->parse_proto_simple($proto);
+  }
 }
 
 sub _string_to_tc {
@@ -238,6 +245,7 @@ sub _string_to_tc {
 
   return $tc if ref $tc;
 
+  eval 'use Moose::Util::TypeConstraints';
   return Moose::Util::TypeConstraints::find_or_create_isa_type_constraint($name)
 }
 
@@ -246,6 +254,7 @@ sub parse_proto_using_pms {
 
   my @conditions;
 
+  eval 'use Parse::Method::Signatures';
   my $sig = Parse::Method::Signatures->new(
     input => $proto,
     from_namespace => $self->get_curstash_name,
@@ -279,6 +288,27 @@ sub parse_proto_using_pms {
     foreach my $con (@{$param->constraints}) {
       $con =~ s/^{|}$//g;
       push @conditions, "do {local \$_ = \$TryCatch::Error; $con }";
+    }
+  }
+
+  return $var_code, @conditions;
+}
+
+sub parse_proto_simple {
+  my ($self, $proto) = @_;
+
+  my @conditions;
+
+  my $var_code = '';
+
+  my $index_var = index ($proto, '$');
+
+  if ($index_var != -1) {
+    my $name = substr ($proto, $index_var);
+    $var_code = "my $name = \$TryCatch::Error;";
+    if ($index_var > 1) {
+      my $type = substr ($proto, 0, $index_var - 1);
+      push @conditions, "\$TryCatch::Error->isa('$type')";
     }
   }
 
@@ -413,6 +443,16 @@ the case of a 302.
 In the case where multiple catch blocks are present, the first one that matches
 the type constraints (if any) will executed.
 
+You can use the package in a lighter way (without using Moose) importing like this:
+
+ use TryCatch ':simple';
+
+In this mode, only these form of catchs will be supported:
+
+ catch { ... }
+ catch ($err) { ... }
+ catch (TypeFoo $e) { ... }
+
 =head1 BENEFITS
 
 B<return>. You can put a return in a try block, and it would do the right thing
@@ -433,10 +473,6 @@ Decide on C<finally> semantics w.r.t return values.
 =item *
 
 Write some more documentation
-
-=item *
-
-Split out the dependency on Moose
 
 =back
 

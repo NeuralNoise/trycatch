@@ -45,7 +45,7 @@ SYNTAX
 
      catch ($err) { ... }
 
-    Type checking of the exception can be performed by specifing a type
+    Type checking of the exception can be performed by specifying a type
     constraint or where clauses in the signature as follows:
 
      catch (TypeFoo $e) { ... }
@@ -58,7 +58,7 @@ SYNTAX
     use where clauses to only match a certain sub-condition on an error. For
     example, assuming that "HTTPError" is a suitably defined TC:
 
-     catch (HTTPError $e where { $_->code >= 400 && $_->code <= 499 } ) { 
+     catch (HTTPError $e where { $_->code >= 400 && $_->code <= 499 } ) {
        return "4XX error";
      }
      catch (HTTPError $e) {
@@ -70,6 +70,17 @@ SYNTAX
 
     In the case where multiple catch blocks are present, the first one that
     matches the type constraints (if any) will executed.
+
+    You can use the package in a lighter way (without using Moose) importing
+    like this:
+
+     use TryCatch ':simple';
+
+    In this mode, only these form of catchs will be supported:
+
+     catch { ... }
+     catch ($err) { ... }
+     catch (TypeFoo $e) { ... }
 
 BENEFITS
     return. You can put a return in a try block, and it would do the right
@@ -83,8 +94,6 @@ TODO
     *   Decide on "finally" semantics w.r.t return values.
 
     *   Write some more documentation
-
-    *   Split out the dependancy on Moose
 
 SEE ALSO
     MooseX::Types, Moose::Util::TypeConstraints, Parse::Method::Signatures.
