@@ -10,6 +10,8 @@ use Moose::Util::TypeConstraints;
 
 our $VERSION = '1.003001';
 
+use namespace::clean;
+
 use Sub::Exporter -setup => {
   exports => [qw/try/],
   groups => { default => [qw/try/] },

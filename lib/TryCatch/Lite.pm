@@ -25,8 +25,6 @@ my ($LOOKAHEAD_TRY, $LOOKAHEAD_CATCH) = (0,1);
 
 XSLoader::load('TryCatch', $VERSION);
 
-use namespace::clean;
-
 use Sub::Exporter -setup => {
   exports => [qw/try/],
   groups => { default => [qw/try/] },
