@@ -16,7 +16,8 @@ Build-Depends: devscripts (>= 2.10.7~),
  libsub-exporter-perl,
  libb-hooks-op-check-perl,
  libb-hooks-op-ppaddr-perl (>= 0.03),
- libtest-exception-perl
+ libtest-exception-perl,
+ libmodule-install-perl
 Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
 Uploaders: Jonas Smedegaard <dr@jones.dk>
 Standards-Version: 3.9.2
